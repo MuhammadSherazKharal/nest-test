@@ -8,6 +8,7 @@ import { IpWhitelist } from './ipwhitelist.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([IpWhitelist])],
   providers: [IpWhitelistService],
+  exports:[IpWhitelistService],
   controllers: [IpWhitelistController]
 })
 export class IpWhitelistModule {}

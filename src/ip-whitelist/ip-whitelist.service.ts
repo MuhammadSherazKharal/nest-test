@@ -5,28 +5,34 @@ import { IpWhitelist } from './ipwhitelist.entity';
 
 @Injectable()
 export class IpWhitelistService {
-    constructor(@InjectRepository(IpWhitelist) private readonly ipRepo: Repository<IpWhitelist>) {}
+  constructor(@InjectRepository(IpWhitelist) private readonly ipRepo: Repository<IpWhitelist>) { }
 
-   create(ip: string) {
+  async create(ip: string) {
     const newIp = this.ipRepo.create({ ipAddress: ip });
-    return this.ipRepo.save(newIp);
+    return await this.ipRepo.save(newIp);
   }
-    findAll() {
-    return this.ipRepo.find();
-  }
-
-
-  updateIp(id: number, ip: string) {
-    return this.ipRepo.update(id, { ipAddress: ip });
+  async findAll() {
+    return await this.ipRepo.find();
   }
 
 
-    removeIp(id: number) {
-    return this.ipRepo.delete(id);
+  async updateIp(id: string, ip: string) {
+    console.log('here>>>>>>>>>>>>', ip, 'id', id)
+    await this.ipRepo.update(id, { ipAddress: ip });
+    const updated = await this.ipRepo.findOne({ where: { id } });
+    return updated;
+  }
+
+
+  async removeIp(id: string) {
+     await this.ipRepo.delete(id);
   }
 
   async isAllowed(ip?: string): Promise<boolean> {
+    console.log('ip>>>>>>>', ip);
+
     const found = await this.ipRepo.findOne({ where: { ipAddress: ip } });
+    console.log('IPAddress', found);
     return !!found;
   }
 

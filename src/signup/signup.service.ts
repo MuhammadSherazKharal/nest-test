@@ -14,7 +14,8 @@ export class SignupService {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         const newUser = this.userRepo.create({ name, phone, email, password: hashedPassword });
-        return await this.userRepo.save(newUser);
+        const saveuser = await this.userRepo.save(newUser);
+        return { name: saveuser.name, email: saveuser.email };
     }
 
 
@@ -42,12 +43,12 @@ export class SignupService {
         }
 
 
-
-        return await this.userRepo.save(user);
+        const updateduser = await this.userRepo.save(user);
+        return { name: updateduser.name, email: updateduser.email };
     }
     async findById(id: string) {
-        const user=await this.userRepo.findOne({ where: { id },  select: ['id', 'name', 'email', 'phone'], });
-        if(!user){
+        const user = await this.userRepo.findOne({ where: { id }, select: ['id', 'name', 'email', 'phone'], });
+        if (!user) {
             throw new Error('User not found');
         }
         return user;

@@ -8,6 +8,8 @@ export class IpWhitelistMiddleware implements NestMiddleware {
 
   async use(req: Request, res: Response, next: NextFunction) {
     const clientIp = req.ip;
+    console.log(clientIp);
+    console.log('HIiiiiiiiii its Middleware')
     const allowed = await this.ipService.isAllowed(clientIp);
     if (!allowed) {
       throw new ForbiddenException('Your IP is not allowed');

@@ -9,9 +9,12 @@ import { ProfileModule } from './profile/profile.module';
 import { IpWhitelistModule } from './ip-whitelist/ip-whitelist.module';
 import { IpWhitelistMiddleware } from './ip-whitelist/ip-whitelist.middleware';
 import { ThrottlerModule } from '@nestjs/throttler';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 
-@Module({
+
+@Module({ 
   imports: [
 
 
@@ -31,11 +34,11 @@ import { ThrottlerModule } from '@nestjs/throttler';
       limit: 10,
     }]),
     SignupModule, LoginModule, ProfileModule, IpWhitelistModule],
-  controllers: [AppController],
+  controllers: [AppController, ],
   providers: [AppService],
 })
 export class AppModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(IpWhitelistMiddleware).forRoutes('*');
-  }
+  // configure(consumer: MiddlewareConsumer) {
+  //   consumer.apply(IpWhitelistMiddleware).forRoutes('*');
+  // }
 }

@@ -12,7 +12,7 @@ import { User } from 'src/signup/signup.entity';
     TypeOrmModule.forFeature([User]),
     PassportModule,
     JwtModule.register({
-      secret: 'secretKey',       
+      secret: 'supersecret',       
       signOptions: { expiresIn: '1h' },
     }),
   ],

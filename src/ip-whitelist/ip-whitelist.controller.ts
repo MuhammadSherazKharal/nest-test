@@ -1,30 +1,44 @@
-import { Controller,Post,Body, Put, Delete, Get } from '@nestjs/common';
+import { Controller,Post,Body, Put, Delete, Get,Param ,UseGuards} from '@nestjs/common';
 import { IpWhitelistService } from './ip-whitelist.service';
+import { Throttle } from '@nestjs/throttler';
 
-@Controller('ip-whitelist')
+
+
+
+
+
+@Controller('ips')
 export class IpWhitelistController {
 constructor (private readonly ipService: IpWhitelistService){}
 
   @Post('add')
  
-  create(@Body() body: { ip: string;  }) {
-    return this.ipService.create(body.ip,);
+ async create(@Body() body: { ip: string;  }) {
+    console.log('here')
+    return await this.ipService.create(body.ip,);
   }
+@Throttle({ findAll: { limit: 2, ttl: 60 } })
+@Get('allIps')
+async findAll() {
+  console.log('hi')
+  return await this.ipService.findAll();
+}
 
-  @Get('allIps')
-  findAll() {
-    return this.ipService.findAll();
-  }
 
     @Put('updateIp/:id')
-    update(@Body() body: { id: number; ip: string; }) {
-    return this.ipService.updateIp(body.id, body.ip);
+    async update(
+        @Param('id') id: string,
+        @Body() body: { ip: string; }) {
+    const updated = await this.ipService.updateIp(id, body.ip);
+    return {message:'IP Adress Updated successfully',
+      data: updated,
+    }
   }
 
 
   @Delete('removeIp/:id')
-  remove(@Body() body: { id: number; }) {
-    return this.ipService.removeIp(body.id);
+  async remove(@Param('id') id:string) {
+    return await this.ipService.removeIp(id);
   }
   
 
