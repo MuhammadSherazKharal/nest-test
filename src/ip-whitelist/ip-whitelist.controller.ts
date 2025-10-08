@@ -1,6 +1,6 @@
 import { Controller,Post,Body, Put, Delete, Get,Param ,UseGuards} from '@nestjs/common';
 import { IpWhitelistService } from './ip-whitelist.service';
-import { Throttle } from '@nestjs/throttler';
+import {ThrottlerGuard, Throttle } from '@nestjs/throttler';
 
 
 
@@ -8,6 +8,8 @@ import { Throttle } from '@nestjs/throttler';
 
 
 @Controller('ips')
+
+@UseGuards(ThrottlerGuard)
 export class IpWhitelistController {
 constructor (private readonly ipService: IpWhitelistService){}
 
@@ -17,7 +19,12 @@ constructor (private readonly ipService: IpWhitelistService){}
     console.log('here')
     return await this.ipService.create(body.ip,);
   }
-@Throttle({ findAll: { limit: 2, ttl: 60 } })
+
+
+
+
+  
+@Throttle({ default: { limit: 2, ttl: 60 } })
 @Get('allIps')
 async findAll() {
   console.log('hi')

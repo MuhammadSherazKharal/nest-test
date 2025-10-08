@@ -8,8 +8,10 @@ import { LoginModule } from './login/login.module';
 import { ProfileModule } from './profile/profile.module';
 import { IpWhitelistModule } from './ip-whitelist/ip-whitelist.module';
 import { IpWhitelistMiddleware } from './ip-whitelist/ip-whitelist.middleware';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import * as dotenv from 'dotenv';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottleMiddleware } from './middleware/throttle.middleware';
 dotenv.config();
 
 
@@ -31,14 +33,25 @@ dotenv.config();
     }),
     ThrottlerModule.forRoot([{
       ttl: 60,
-      limit: 10,
+      limit: 1,
     }]),
     SignupModule, LoginModule, ProfileModule, IpWhitelistModule],
   controllers: [AppController, ],
-  providers: [AppService],
+  providers: [  {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+    AppService],
 })
 export class AppModule {
   // configure(consumer: MiddlewareConsumer) {
   //   consumer.apply(IpWhitelistMiddleware).forRoutes('*');
   // }
+
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(ThrottleMiddleware)
+      .forRoutes('*'); 
+  }
+
 }
